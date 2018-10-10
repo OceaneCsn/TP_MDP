@@ -42,7 +42,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	public ValueIterationAgent(double gamma,  MDP mdp) {
 		super(mdp);
 		this.gamma = gamma;
-		//*** Initialisation arbitraire de la map à 0
+		//*** Initialisation arbitraire de la map ï¿½ 0
 		for(Etat etat : mdp.getEtatsAccessibles()) {
 			V.put(etat, 0.0);
 		}
@@ -54,12 +54,69 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	
 	public ValueIterationAgent(MDP mdp) {
 		this(0.9,mdp);
-		//*** Initialisation arbitraire de la map à 0
+		//*** Initialisation arbitraire de la map ï¿½ 0
 		for(Etat etat : mdp.getEtatsAccessibles()) {
 			V.put(etat, 0.0);
 		}
 	}
 	
+	final class valuesActions {
+		private final HashMap<Etat,Double> nextV;
+		private final HashMap<Etat,List<Action>> nextPolitique;
+		
+		public valuesActions(HashMap<Etat,Double> nextV, HashMap<Etat,List<Action>> nextPolitique)
+		{
+			this.nextV = nextV;
+			this.nextPolitique = nextPolitique;
+		}
+		
+		public HashMap<Etat,Double> getV_values()
+		{
+			return nextV;
+		}
+		
+		public HashMap<Etat,List<Action>> get_politique()
+		{
+			return nextPolitique;
+		}
+	}
+	/**
+	 * Prepare la mise a jour de V : calcule V_k(s) en fonction de V_{k-1}(s')
+	 * et renvoie : la nouvelle table V (pour updateV) 
+	 * et la table des actions possibles (pour getPolitique)
+	 */
+
+	public valuesActions nextIterationV()
+	{
+		HashMap<Etat, Double> futureV = V;
+		HashMap<Etat,List<Action>> allBestActions = new HashMap<Etat,List<Action>>();
+		for(Etat s : V.keySet()) {
+			ArrayList<Action> bestActions = new ArrayList<Action>();
+			Double somme = 0.0;
+			// iterate on all possible actions to find the best one (ie with higher somme)
+			for(Action a : mdp.getActionsPossibles(s)) {
+				double cdt = 0;
+				try {
+					Map<Etat, Double> transitions = mdp.getEtatTransitionProba(s, a);
+					// sum over all possibles Etats for this action
+					for(Map.Entry<Etat, Double> transi : mdp.getEtatTransitionProba(s, a).entrySet()) {
+						cdt = cdt + transi.getValue()*(mdp.getRecompense(s, a, transi.getKey()) + gamma*V.get(transi.getKey()));
+						if(cdt >= somme) {
+							somme = cdt;
+							bestActions.add(a);
+							futureV.put(s, somme);
+						}
+					}
+				}
+				catch(Exception ex) {
+					System.out.println("Action non autorisï¿½e dans cet ï¿½tat : "+ex);
+				}
+			}
+			allBestActions.put(s,bestActions);
+		}
+		
+		return new valuesActions(futureV,allBestActions);
+	}
 	/**
 	 * 
 	 * Mise a jour de V: effectue UNE iteration de value iteration (calcule V_k(s) en fonction de V_{k-1}(s'))
@@ -73,33 +130,12 @@ public class ValueIterationAgent extends PlanningValueAgent{
 		//delta < epsilon 
 		this.delta=0.0;
 		//*** VOTRE CODE
-		HashMap<Etat, Double> oldV = V;
-		for(Etat s : V.keySet()) {
-			ArrayList<Action> bestActions = new ArrayList<Action>();
-			Double somme = 0.0;
-			for(Action a : mdp.getActionsPossibles(s)) {
-				double cdt = 0;
-				try {
-					Map<Etat, Double> transitions = mdp.getEtatTransitionProba(s, a);
-					for(Map.Entry<Etat, Double> transi : mdp.getEtatTransitionProba(s, a).entrySet()) {
-						cdt = cdt + transi.getValue()*(mdp.getRecompense(s, a, transi.getKey()) + gamma*oldV.get(transi.getKey()));
-						if(cdt >= somme) {
-							somme = cdt;
-							bestActions.add(a);
-							//mettre la valeur dans v actuel
-						}
-					}
-				}
-				catch(Exception ex) {
-					System.out.println("Action non autorisée dans cet état : "+ex);
-				}
-			}
-		}
+		V = nextIterationV().getV_values();
 		
 		// mise a jour vmax et vmin pour affichage du gradient de couleur:
 		//vmax est la valeur de max pour tout s de V
 		//vmin est la valeur de min pour tout s de V
-		// ...
+		//?????
 		
 		
 		//******************* laisser notification a la fin de la methode	
@@ -109,7 +145,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	
 	/**
 	 * renvoi l'action executee par l'agent dans l'etat e 
-	 * Si aucune actions possibles, renvoi Action2D.NONE
+	 * Si aucune action possible, renvoi Action2D.NONE
 	 */
 	@Override
 	public Action getAction(Etat e) {
@@ -132,9 +168,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	public List<Action> getPolitique(Etat _e) {
 		//*** VOTRE CODE
 		
-		// retourne action de meilleure valeur dans _e selon V, 
-		// retourne liste vide si aucune action legale (etat absorbant)
-		List<Action> returnactions = new ArrayList<Action>();
+		List<Action> returnactions = nextIterationV().get_politique().get(_e);
 	
 		return returnactions;
 		
