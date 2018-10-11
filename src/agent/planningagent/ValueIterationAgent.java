@@ -34,7 +34,6 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	 * fonction de valeur des etats
 	 */
 	protected HashMap<Etat,Double> V;
-	
 	/**
 	 * 
 	 * @param gamma
@@ -46,9 +45,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 		this.gamma = gamma;
 		V = new HashMap<Etat,Double>();
 		//*** Initialisation arbitraire de la map � 0
-		System.out.println("constructor with gamma");
 		for(Etat etat : mdp.getEtatsAccessibles()) {
-			System.out.println(etat);
 			V.put(etat, 0.0);
 		}
 		
@@ -61,9 +58,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 		this(0.9,mdp);
 		V = new HashMap<Etat,Double>();
 		//*** Initialisation arbitraire de la map � 0
-		System.out.println("constructor without gamma");
 		for(Etat etat : mdp.getEtatsAccessibles()) {
-			System.out.println(etat);
 			V.put(etat, 0.0);
 		}
 	}
@@ -99,7 +94,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 
 	public valuesActions nextIterationV()
 	{
-		HashMap<Etat, Double> futureV = V;
+		HashMap<Etat, Double> futureV = new HashMap<Etat,Double>(V);
 		HashMap<Etat,List<Action>> allBestActions = new HashMap<Etat,List<Action>>();
 		for(Etat s : V.keySet()) {
 			ArrayList<Action> bestActions = new ArrayList<Action>();
@@ -108,7 +103,6 @@ public class ValueIterationAgent extends PlanningValueAgent{
 			for(Action a : mdp.getActionsPossibles(s)) {
 				double cdt = 0;
 				try {
-					Map<Etat, Double> transitions = mdp.getEtatTransitionProba(s, a);
 					// sum over all possibles Etats for this action
 					for(Map.Entry<Etat, Double> transi : mdp.getEtatTransitionProba(s, a).entrySet()) {
 						cdt = cdt + transi.getValue()*(mdp.getRecompense(s, a, transi.getKey()) + gamma*V.get(transi.getKey()));
@@ -116,6 +110,11 @@ public class ValueIterationAgent extends PlanningValueAgent{
 							somme = cdt;
 							bestActions.add(a);
 							futureV.put(s, somme);
+//							if (transi.getKey().toString().equals("Etat2D [x=2, y=0]"))
+//							{
+//								System.out.println(transi.getKey());
+//								System.out.println(somme);
+//							}
 						}
 					}
 				}
@@ -124,6 +123,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 				}
 			}
 			allBestActions.put(s,bestActions);
+			
 		}
 		
 		return new valuesActions(futureV,allBestActions);
@@ -136,14 +136,12 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	 */
 	@Override
 	public void updateV(){
-		System.out.println("V was updated");
 		//delta est utilise pour detecter la convergence de l'algorithme
 		//lorsque l'on planifie jusqu'a convergence, on arrete les iterations lorsque
 		//delta < epsilon 
 		this.delta=0.0;
 		//*** VOTRE CODE
 		V = nextIterationV().getV_values();
-		System.out.println(V.values());
 		
 		// mise a jour vmax et vmin pour affichage du gradient de couleur:
 		vmax = Collections.max(V.values(),null);
