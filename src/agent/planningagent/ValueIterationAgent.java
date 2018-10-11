@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
 
 import util.HashMapUtil;
 
@@ -42,8 +44,11 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	public ValueIterationAgent(double gamma,  MDP mdp) {
 		super(mdp);
 		this.gamma = gamma;
+		V = new HashMap<Etat,Double>();
 		//*** Initialisation arbitraire de la map � 0
+		System.out.println("constructor with gamma");
 		for(Etat etat : mdp.getEtatsAccessibles()) {
+			System.out.println(etat);
 			V.put(etat, 0.0);
 		}
 		
@@ -54,12 +59,18 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	
 	public ValueIterationAgent(MDP mdp) {
 		this(0.9,mdp);
+		V = new HashMap<Etat,Double>();
 		//*** Initialisation arbitraire de la map � 0
+		System.out.println("constructor without gamma");
 		for(Etat etat : mdp.getEtatsAccessibles()) {
+			System.out.println(etat);
 			V.put(etat, 0.0);
 		}
 	}
 	
+	/*class created so nextIterationV() could return V values
+	 * AND best politique for the whole grid
+	 */
 	final class valuesActions {
 		private final HashMap<Etat,Double> nextV;
 		private final HashMap<Etat,List<Action>> nextPolitique;
@@ -125,17 +136,19 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	 */
 	@Override
 	public void updateV(){
+		System.out.println("V was updated");
 		//delta est utilise pour detecter la convergence de l'algorithme
 		//lorsque l'on planifie jusqu'a convergence, on arrete les iterations lorsque
 		//delta < epsilon 
 		this.delta=0.0;
 		//*** VOTRE CODE
 		V = nextIterationV().getV_values();
+		System.out.println(V.values());
 		
 		// mise a jour vmax et vmin pour affichage du gradient de couleur:
-		//vmax est la valeur de max pour tout s de V
-		//vmin est la valeur de min pour tout s de V
-		//?????
+		vmax = Collections.max(V.values(),null);
+		vmin = Collections.min(V.values(),null);
+		
 		
 		
 		//******************* laisser notification a la fin de la methode	
@@ -150,15 +163,21 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	@Override
 	public Action getAction(Etat e) {
 		//*** VOTRE CODE
-		
-		return Action2D.NONE;
-		
+		List<Action> possibleActions = getPolitique(e);
+		if (!possibleActions.isEmpty())
+		{
+			int randindex = ThreadLocalRandom.current().nextInt(0, possibleActions.size());
+			return possibleActions.get(randindex);
+		}
+		else 
+		{
+			return Action2D.NONE;
+		}
 	}
 	@Override
 	public double getValeur(Etat _e) {
 		//*** VOTRE CODE
-		
-		return 0.0;
+		return V.get(_e);
 	}
 	/**
 	 * renvoi action(s) de plus forte(s) valeur(s) dans etat 
@@ -167,7 +186,6 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	@Override
 	public List<Action> getPolitique(Etat _e) {
 		//*** VOTRE CODE
-		
 		List<Action> returnactions = nextIterationV().get_politique().get(_e);
 	
 		return returnactions;
