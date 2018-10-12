@@ -96,8 +96,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	{
 		HashMap<Etat, Double> futureV = new HashMap<Etat,Double>(V);
 		HashMap<Etat,List<Action>> allBestActions = new HashMap<Etat,List<Action>>();
-		for(Etat s : V.keySet()) {
-			ArrayList<Action> bestActions = new ArrayList<Action>();
+		for(Etat s : V.keySet()) {			
 			Double somme = 0.0;
 			// iterate on all possible actions to find the best one (ie with higher somme)
 			for(Action a : mdp.getActionsPossibles(s)) {
@@ -107,24 +106,35 @@ public class ValueIterationAgent extends PlanningValueAgent{
 					// sum over all possibles Etats for this action
 					for(Map.Entry<Etat, Double> transi : mdp.getEtatTransitionProba(s, a).entrySet()) {
 						cdt = cdt + transi.getValue()*(mdp.getRecompense(s, a, transi.getKey()) + gamma*V.get(transi.getKey()));
-						if(cdt >= somme) {
-							somme = cdt;
-							bestActions.add(a);
-							futureV.put(s, somme);
-//							if (transi.getKey().toString().equals("Etat2D [x=2, y=0]"))
-//							{
-//								System.out.println(transi.getKey());
-//								System.out.println(somme);
-//							}
+					}
+					//if the value for this arriving state and action is greater than the previous action ones
+					if(cdt > somme) {
+						somme = cdt;
+						ArrayList<Action> actionList = new ArrayList<Action>();
+						actionList.add(a);
+						allBestActions.put(s,actionList);
+						futureV.put(s, somme);
+					}
+					//if it is the same, we add the action to the list of possible actions for the given stats s
+					//so we can return a list of actions if two neighboring cells share the same value
+					if(cdt==somme) {
+						if(!allBestActions.containsKey(s)) {
+							//case when everything is 0
+							ArrayList<Action> newActionList = new ArrayList<Action>();
+							newActionList.add(a);
+							allBestActions.put(s, newActionList);
+						}
+						else {
+							ArrayList<Action> newActionList = new ArrayList<Action>(allBestActions.get(s));
+							newActionList.add(a);
+							allBestActions.put(s, newActionList);
 						}
 					}
 				}
 				catch(Exception ex) {
-					System.out.println("Action non autoris�e dans cet �tat : "+ex);
+					System.out.println("Action non autoris�e dans cet �tat : " + ex);
 				}
-			}
-			allBestActions.put(s,bestActions);
-			
+			}			
 		}
 		
 		return new valuesActions(futureV,allBestActions);
@@ -141,12 +151,15 @@ public class ValueIterationAgent extends PlanningValueAgent{
 		//lorsque l'on planifie jusqu'a convergence, on arrete les iterations lorsque
 		//delta < epsilon 
 		
+		//getting the new values of V
 		HashMap<Etat,Double> newV = nextIterationV().getV_values();
 		
+		//creating a Hastable with the difference between the old and current V
 		HashMap<Etat,Double> deltaV = new HashMap<Etat, Double>();
 		for (Etat e : V.keySet()) {
 			deltaV.put(e, Math.abs(V.get(e)-newV.get(e)));
 		}
+		//computing delta
 		this.delta = Collections.max(deltaV.values(),null);
 		
 		//put the new iteration values into the current V
