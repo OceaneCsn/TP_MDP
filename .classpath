@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="simu"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="D:/MASTER/SMA/TP1_MDP/TP_MDP/TP_MD/lib/IAMDPLib1.8.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/D:/MASTER/SMA/TP1_MDP/TP_MDP/TP_MD/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/IAMDPLib1.8.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/D:/MASTER/SMA/TP1_MDP/TP_MDP/TP_MD/simu/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="D:/MASTER/SMA/TP1_MDP/TP_MDP/TP_MD/simu"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

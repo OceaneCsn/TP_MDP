@@ -62,6 +62,7 @@ public abstract class PlanningValueAgent extends ValueAgent implements IPlanning
 		do{
 			this.updateV();
 			nbIter++;
+			System.out.println("delta : "+this.getDelta()); 
 		}
 		while(this.getDelta()>epsilon);
 		System.out.println("Convergence a "+epsilon+" pres de VI apres "+nbIter+" iterations.");

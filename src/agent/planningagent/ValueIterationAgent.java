@@ -44,7 +44,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 		super(mdp);
 		this.gamma = gamma;
 		V = new HashMap<Etat,Double>();
-		//*** Initialisation arbitraire de la map � 0
+		//*** Initialisation arbitraire de la map a 0
 		for(Etat etat : mdp.getEtatsAccessibles()) {
 			V.put(etat, 0.0);
 		}
@@ -101,6 +101,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 			Double somme = 0.0;
 			// iterate on all possible actions to find the best one (ie with higher somme)
 			for(Action a : mdp.getActionsPossibles(s)) {
+				//cdt means candidate
 				double cdt = 0;
 				try {
 					// sum over all possibles Etats for this action
@@ -139,31 +140,36 @@ public class ValueIterationAgent extends PlanningValueAgent{
 		//delta est utilise pour detecter la convergence de l'algorithme
 		//lorsque l'on planifie jusqu'a convergence, on arrete les iterations lorsque
 		//delta < epsilon 
-		this.delta=0.0;
-		//*** VOTRE CODE
-		V = nextIterationV().getV_values();
+		
+		HashMap<Etat,Double> newV = nextIterationV().getV_values();
+		
+		HashMap<Etat,Double> deltaV = new HashMap<Etat, Double>();
+		for (Etat e : V.keySet()) {
+			deltaV.put(e, Math.abs(V.get(e)-newV.get(e)));
+		}
+		this.delta = Collections.max(deltaV.values(),null);
+		
+		//put the new iteration values into the current V
+		V = newV;
 		
 		// mise a jour vmax et vmin pour affichage du gradient de couleur:
 		vmax = Collections.max(V.values(),null);
 		vmin = Collections.min(V.values(),null);
-		
-		
-		
 		//******************* laisser notification a la fin de la methode	
 		this.notifyObs();
 	}
 	
-	
+
 	/**
 	 * renvoi l'action executee par l'agent dans l'etat e 
 	 * Si aucune action possible, renvoi Action2D.NONE
 	 */
 	@Override
 	public Action getAction(Etat e) {
-		//*** VOTRE CODE
 		List<Action> possibleActions = getPolitique(e);
 		if (!possibleActions.isEmpty())
 		{
+			//on tire au hasard l'une des actions equiprobables donnees par la politique
 			int randindex = ThreadLocalRandom.current().nextInt(0, possibleActions.size());
 			return possibleActions.get(randindex);
 		}
@@ -174,7 +180,6 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	}
 	@Override
 	public double getValeur(Etat _e) {
-		//*** VOTRE CODE
 		return V.get(_e);
 	}
 	/**
@@ -183,9 +188,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	 */
 	@Override
 	public List<Action> getPolitique(Etat _e) {
-		//*** VOTRE CODE
 		List<Action> returnactions = nextIterationV().get_politique().get(_e);
-	
 		return returnactions;
 		
 	}
@@ -193,17 +196,12 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	@Override
 	public void reset() {
 		super.reset();
-
-		
 		this.V.clear();
 		for (Etat etat:this.mdp.getEtatsAccessibles()){
 			V.put(etat, 0.0);
 		}
 		this.notifyObs();
 	}
-
-	
-
 	
 
 	public HashMap<Etat,Double> getV() {
@@ -217,10 +215,4 @@ public class ValueIterationAgent extends PlanningValueAgent{
 		System.out.println("gamma= "+gamma);
 		this.gamma = _g;
 	}
-
-
-	
-	
-
-	
 }
