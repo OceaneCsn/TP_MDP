@@ -18,8 +18,6 @@ public class testValueIterationBridge {
 		
 					GridworldMDP gmdp = GridworldMDP.getBridgeGrid();
 					GridworldEnvironnement g = new GridworldEnvironnement(gmdp);
-
-				
 					ValueIterationAgent a = new ValueIterationAgent(gmdp);
 					
 					VueGridworldValue vue = new VueGridworldValue(g,a);

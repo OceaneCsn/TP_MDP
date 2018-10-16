@@ -180,7 +180,7 @@ public class ValueIterationAgent extends PlanningValueAgent{
 	@Override
 	public Action getAction(Etat e) {
 		List<Action> possibleActions = getPolitique(e);
-		if (!possibleActions.isEmpty())
+		if (possibleActions !=null)
 		{
 			//on tire au hasard l'une des actions equiprobables donnees par la politique
 			int randindex = ThreadLocalRandom.current().nextInt(0, possibleActions.size());
