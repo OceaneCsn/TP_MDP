@@ -60,7 +60,6 @@ public class QLearningAgent extends RLAgent {
 			return new ArrayList<Action>();
 			
 		}
-		
 		if(!qvaleurs.isEmpty()) {
 			for(Action a : qvaleurs.get(e).keySet()) {
 				double maxtmp = Collections.max(qvaleurs.get(e).values());
@@ -69,16 +68,17 @@ public class QLearningAgent extends RLAgent {
 				}
 			}
 		}
-		return returnactions;
-		
-		
+		return returnactions;		
 	}
 	
 	@Override
 	public double getValeur(Etat e) {
-		//*** VOTRE CODE
-		return 0.0;
 		
+		if(qvaleurs.containsKey(e)) {
+			return Collections.max(qvaleurs.get(e).values());
+		}
+		
+		return 0.0;
 	}
 
 	@Override
@@ -87,13 +87,13 @@ public class QLearningAgent extends RLAgent {
 	}
 	
 	
-	
 	@Override
 	public void setQValeur(Etat e, Action a, double d) {
-		
-		qvaleurs.get(e).put(a,d);
+		HashMap<Action, Double> tmpMap = new HashMap<Action, Double>(qvaleurs.get(e));
+		tmpMap.put(a, d);
+		qvaleurs.put(e,tmpMap);
 		System.out.println("valeur mise a jour : "+d);
-
+		System.out.println("valeur stockee : "+qvaleurs.get(e).get(a));
 		ArrayList<Double> maxs = new ArrayList<Double>();
 		ArrayList<Double> mins = new ArrayList<Double>();
 		for (Etat et:qvaleurs.keySet()) {
@@ -103,7 +103,6 @@ public class QLearningAgent extends RLAgent {
 		vmax = Collections.max(maxs);	
 		vmin = Collections.min(mins);	
 		this.notifyObs();
-		
 	}
 	
 	
@@ -149,8 +148,7 @@ public class QLearningAgent extends RLAgent {
 		super.reset();
 		System.out.println("je reset!");
 		qvaleurs.clear();
-		
-		this.episodeNb =0;
+		this.episodeNb = 0;
 		this.notifyObs();
 	}
 
