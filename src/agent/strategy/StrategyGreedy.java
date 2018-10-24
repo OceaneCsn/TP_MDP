@@ -20,7 +20,7 @@ public class StrategyGreedy extends StrategyExploration{
 	
 	
 	
-	public StrategyGreedy(RLAgent agent,double epsilon) {
+	public StrategyGreedy(RLAgent agent, double epsilon) {
 		super(agent);
 		this.epsilon = epsilon;
 	}
@@ -29,13 +29,31 @@ public class StrategyGreedy extends StrategyExploration{
 	public Action getAction(Etat _e) {//renvoi null si _e absorbant
 		double d =rand.nextDouble();
 		List<Action> actions;
+		Action actionChoisie;
+		List<Action> actionsLegales = this.agent.getActionsLegales(_e);
 		if (this.agent.getActionsLegales(_e).isEmpty()){
 			return null;
 		}
 	
 		//VOTRE CODE ICI
+		if(d > epsilon) {
+			//politique gloutonne
+			actions = this.agent.getPolitique(_e);
+			if(!actions.isEmpty()) {
+				int index = rand.nextInt(actions.size());
+				actionChoisie = actions.get(index);
+			}
+			else {
+				return null;
+			}
+		}
+		else {
+			//mouvement aleatoire
+			int index = rand.nextInt(actionsLegales.size());
+			actionChoisie = actionsLegales.get(index);
+		}
 		
-		return null;
+		return actionChoisie;
 	}
 
 	public double getEpsilon() {

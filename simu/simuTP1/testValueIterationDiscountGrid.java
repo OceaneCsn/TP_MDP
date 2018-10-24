@@ -27,6 +27,5 @@ public class testValueIterationDiscountGrid {
 					vue.setVisible(true);
 				}
 			});
-
 	}
 }

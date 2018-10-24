@@ -65,6 +65,8 @@ public class EnvironnementPacmanMDPClassic extends EnvironnementPacmanRL {
 		//appele par RLAgent::runEpisode
 		int old_score = this.gamepacman.getState().getScore();
 		/** In one step, move pacman or ghost and update score**/
+		System.out.print(_a);
+		System.out.print(_a.ordinal());
 		this.gamepacman.oneIteration(new ActionPacman(_a.ordinal()));;//bouge pacman avec _a puis fantomes
 		
 		EtatPacmanMDPClassic emdp = new EtatPacmanMDPClassic(gamepacman.getState());

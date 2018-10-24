@@ -40,9 +40,6 @@ public class QLearningAgent extends RLAgent {
 		qvaleurs = new HashMap<Etat,HashMap<Action,Double>>();
 
 	}
-
-
-	
 	
 	/**
 	 * renvoi action(s) de plus forte(s) valeur(s) dans l'etat e
