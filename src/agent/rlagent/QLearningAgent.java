@@ -65,6 +65,10 @@ public class QLearningAgent extends RLAgent {
 				}
 			}
 		}
+		else {
+			//toutes les actions ont une valeur de 0, on retourne donc la liste de toutes les actions possibles
+				return this.getActionsLegales(e);
+		}
 		return returnactions;		
 	}
 	
