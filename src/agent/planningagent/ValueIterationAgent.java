@@ -97,17 +97,19 @@ public class ValueIterationAgent extends PlanningValueAgent{
 		HashMap<Etat, Double> futureV = new HashMap<Etat,Double>(V);
 		HashMap<Etat,List<Action>> allBestActions = new HashMap<Etat,List<Action>>();
 		for(Etat s : V.keySet()) {			
-			Double somme = 0.0;
+			Double somme = null;
 			// iterate on all possible actions to find the best one (ie with higher somme)
 			for(Action a : mdp.getActionsPossibles(s)) {
 				//cdt means candidate
 				double cdt = 0;
 				try {
-					// sum over all possibles Etats for this action
+					// sum over all possibles arriving Etats for this action
 					for(Map.Entry<Etat, Double> transi : mdp.getEtatTransitionProba(s, a).entrySet()) {
 						cdt = cdt + transi.getValue()*(mdp.getRecompense(s, a, transi.getKey()) + gamma*V.get(transi.getKey()));
 					}
 					//if the value for this arriving state and action is greater than the previous action ones
+					if(somme==null)
+						somme = cdt - 1;
 					if(cdt > somme) {
 						somme = cdt;
 						ArrayList<Action> actionList = new ArrayList<Action>();
