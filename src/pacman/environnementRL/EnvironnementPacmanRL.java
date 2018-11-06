@@ -62,16 +62,21 @@ public abstract class EnvironnementPacmanRL extends Environnement {
 	//--> utilise par RLAgent::getActionsLegales
 	@Override
 	public List<Action> getActionsPossibles(Etat _e) {
+		System.out.println("Dans getActionsPossibles depuis "+ _e);
 		//renvoi actions qui n'envoient pas dans mur pour _e: action pour unique pacman
-				List<Action> aa=new ArrayList<Action>();
-					for (int i=0; i<NBACTIONS; i++){//prend en compte action NONE
-						StateGamePacman sgp = gamepacman.getState();
-						StateAgentPacman sap = gamepacman.getState().getPacmanState(0);
-						sgp.isLegalMove(new ActionPacman(i), sap);
-						if (gamepacman.getState().isLegalMove(new ActionPacman(i), gamepacman.getState().getPacmanState(0)))
-							aa.add(Action2D.values()[i]);
+		List<Action> aa=new ArrayList<Action>();
+			for (int i=0; i<NBACTIONS; i++){//prend en compte action NONE
+				//StateGamePacman sgp = gamepacman.getState();
+				//StateAgentPacman sap = gamepacman.getState().getPacmanState(0);
+				//sgp.isLegalMove(new ActionPacman(i), sap);
+				//System.out.println("action "+new ActionPacman(i));
+
+				if (gamepacman.getState().isLegalMove(new ActionPacman(i), gamepacman.getState().getPacmanState(0))) {
+					aa.add(Action2D.values()[i]);
 				}
-				return aa;
+				
+		}
+		return aa;
 	}
 	
 

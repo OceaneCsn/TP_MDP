@@ -21,7 +21,8 @@ public class QLearningAgent extends RLAgent {
 	 *  format de memorisation des Q valeurs: utiliser partout setQValeur car cette methode notifie la vue
 	 */
 	protected HashMap<Etat,HashMap<Action,Double>> qvaleurs;
-	
+	protected Environnement former_env;
+	protected List<Action> former_actions_possibles;
 	//AU CHOIX: vous pouvez utiliser une Map avec des Pair pour clés si vous préférez
 	//protected HashMap<Pair<Etat,Action>,Double> qvaleurs;
 
@@ -38,7 +39,8 @@ public class QLearningAgent extends RLAgent {
 			Environnement _env) {
 		super(alpha, gamma, _env);
 		qvaleurs = new HashMap<Etat,HashMap<Action,Double>>();
-
+		former_env = _env;
+		former_actions_possibles = _env.getActionsPossibles(_env.getEtatCourant());
 	}
 	
 	/**
@@ -84,17 +86,34 @@ public class QLearningAgent extends RLAgent {
 
 	@Override
 	public double getQValeur(Etat e, Action a) {
+		System.out.println(qvaleurs);
 		return qvaleurs.get(e).get(a);
 	}
 	
 	
 	@Override
 	public void setQValeur(Etat e, Action a, double d) {
-		HashMap<Action, Double> tmpMap = new HashMap<Action, Double>(qvaleurs.get(e));
-		tmpMap.put(a, d);
-		qvaleurs.put(e,tmpMap);
-		System.out.println("valeur mise a jour : "+d);
-		System.out.println("valeur stockee : "+qvaleurs.get(e).get(a));
+		if(qvaleurs.containsKey(e)) {
+			HashMap<Action, Double> tmpMap = new HashMap<Action, Double>(qvaleurs.get(e));
+			tmpMap.put(a, d);
+			qvaleurs.put(e,tmpMap);
+		}
+		else {
+			HashMap<Action,Double> valeurAction = new HashMap<Action,Double>();
+			for (Action ac : env.getActionsPossibles(e)) {
+				if(ac.equals(a)) {
+					valeurAction.put(ac, d);
+				}
+				else {
+					valeurAction.put(ac, 0.0);
+				}
+				
+			}
+			qvaleurs.put(e, valeurAction);
+		}
+		
+		//System.out.println("valeur mise a jour : "+d);
+		//System.out.println("valeur stockee : "+qvaleurs.get(e).get(a));
 		ArrayList<Double> maxs = new ArrayList<Double>();
 		ArrayList<Double> mins = new ArrayList<Double>();
 		for (Etat et:qvaleurs.keySet()) {
@@ -117,25 +136,26 @@ public class QLearningAgent extends RLAgent {
 	 */
 	@Override
 	public void endStep(Etat e, Action a, Etat esuivant, double reward) {
+		System.out.println("hello");
 		if (RLAgent.DISPRL) 
 			System.out.println("QL mise a jour etat "+e+" action "+a+" etat' "+esuivant+ " r "+reward);
 		if(!qvaleurs.containsKey(e)) {
-			HashMap<Action,Double> valeurAction = new HashMap<Action,Double>();
-			for (Action ac : env.getActionsPossibles(e)) {
-				valeurAction.put(ac, 0.0);
+			System.out.println("pour "+e+" actions possibles : "+ former_actions_possibles);
+			for (Action ac : former_actions_possibles) {
+				this.setQValeur(e, ac, 0.0);
 			}
-			qvaleurs.put(e, valeurAction);
 		}
 		if(!qvaleurs.containsKey(esuivant)) {
-			HashMap<Action,Double> valeurAction = new HashMap<Action,Double>();
-			for (Action ac : env.getActionsPossibles(e)) {
-				valeurAction.put(ac, 0.0);
+			System.out.println("pour "+esuivant+" suivant actions possibles : "+this.getActionsLegales(esuivant));
+			for (Action ac : this.getActionsLegales(esuivant)) {
+				this.setQValeur(esuivant, ac, 0.0);
 			}
-			qvaleurs.put(esuivant, valeurAction);
 		}
 		double maxQ = Collections.max(qvaleurs.get(esuivant).values(),null);
 		double valeur = (1-alpha)*getQValeur(e,a) + alpha*(reward + gamma * maxQ);
 		setQValeur(e, a, valeur);
+		former_env = env;
+		former_actions_possibles = env.getActionsPossibles(env.getEtatCourant());
 	}
 
 	@Override

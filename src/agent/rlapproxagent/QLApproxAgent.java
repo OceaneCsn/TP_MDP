@@ -18,16 +18,17 @@ import environnement.Etat;
  */
 public class QLApproxAgent extends QLearningAgent{
 	
-	public QLApproxAgent(double alpha, double gamma, Environnement _env,FeatureFunction _featurefunction) {
+	private FeatureFunction feature_function;
+	public QLApproxAgent(double alpha, double gamma, Environnement _env, FeatureFunction _featurefunction) {
 		super(alpha, gamma, _env);
-		//*** VOTRE CODE
-		
+		feature_function = _featurefunction;
 	}
 
 	
 	@Override
 	public double getQValeur(Etat e, Action a) {
-		//*** VOTRE CODE
+		
+		//*** VOTRE CODE ecrire la fonction d'approximation avec les features
 		return 0.0;
 
 	}
