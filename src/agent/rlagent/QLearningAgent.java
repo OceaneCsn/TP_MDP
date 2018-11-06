@@ -136,17 +136,14 @@ public class QLearningAgent extends RLAgent {
 	 */
 	@Override
 	public void endStep(Etat e, Action a, Etat esuivant, double reward) {
-		System.out.println("hello");
 		if (RLAgent.DISPRL) 
 			System.out.println("QL mise a jour etat "+e+" action "+a+" etat' "+esuivant+ " r "+reward);
 		if(!qvaleurs.containsKey(e)) {
-			System.out.println("pour "+e+" actions possibles : "+ former_actions_possibles);
 			for (Action ac : former_actions_possibles) {
 				this.setQValeur(e, ac, 0.0);
 			}
 		}
 		if(!qvaleurs.containsKey(esuivant)) {
-			System.out.println("pour "+esuivant+" suivant actions possibles : "+this.getActionsLegales(esuivant));
 			for (Action ac : this.getActionsLegales(esuivant)) {
 				this.setQValeur(esuivant, ac, 0.0);
 			}
