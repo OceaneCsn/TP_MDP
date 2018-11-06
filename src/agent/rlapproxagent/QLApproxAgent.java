@@ -44,9 +44,7 @@ public class QLApproxAgent extends QLearningAgent{
 		for (int i = 0; i <nbFeatures; i++) {
 			Q += features[i]*weights.get(i);
 		}
-		
 		return Q;
-
 	}
 	
 	
@@ -80,7 +78,7 @@ public class QLApproxAgent extends QLearningAgent{
 		
 		//*** VOTRE CODE
 		this.weights.clear();
-		//this.feature_function.reset();
+		//this.feature_function.reset(); je sais pas encore comment clear FeatureFonction
 		
 		this.episodeNb =0;
 		this.notifyObs();

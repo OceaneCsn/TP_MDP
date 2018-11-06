@@ -19,20 +19,32 @@ import javafx.util.Pair;
 public class FeatureFunctionIdentity implements FeatureFunction {
 	//*** VOTRE CODE
 	
+	private int nbFeatures;
+	private int nbEtat;
+	private int nbAction;
+	private double[] features;
+	
 	public FeatureFunctionIdentity(int _nbEtat, int _nbAction){
 		//*** VOTRE CODE
+		
+		nbFeatures = _nbEtat*_nbAction;
+		nbAction = _nbAction;
+		nbEtat = _nbEtat;
+		features = new double[nbFeatures];
 	}
 	
 	@Override
 	public int getFeatureNb() {
-		//*** VOTRE CODE
-		return 0;
+		return nbFeatures;
 	}
 
 	@Override
-	public double[] getFeatures(Etat e,Action a){
-		//*** VOTRE CODE
+	public double[] getFeatures(Etat e, Action a){
 		
+		for(int i = 0; i <nbFeatures; i++) {
+			features[i] = 0.0;
+			//if() mettre le 1 là ou il faut : ?
+		}
 		return null;
 	}
 	
