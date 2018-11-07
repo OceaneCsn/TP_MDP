@@ -23,14 +23,17 @@ public class FeatureFunctionIdentity implements FeatureFunction {
 	private int nbEtat;
 	private int nbAction;
 	private double[] features;
+	private HashMap<HashMap<Etat, Action>, Integer> indices;
+	private int index;
 	
 	public FeatureFunctionIdentity(int _nbEtat, int _nbAction){
-		//*** VOTRE CODE
 		
+		index = -1;
 		nbFeatures = _nbEtat*_nbAction;
 		nbAction = _nbAction;
 		nbEtat = _nbEtat;
 		features = new double[nbFeatures];
+		indices = new HashMap<HashMap<Etat, Action>, Integer>();
 	}
 	
 	@Override
@@ -40,12 +43,25 @@ public class FeatureFunctionIdentity implements FeatureFunction {
 
 	@Override
 	public double[] getFeatures(Etat e, Action a){
-		
+		int ind;
+		HashMap<Etat, Action> etat_action= new HashMap<Etat, Action>();
+		etat_action.put(e, a);
+		if(!indices.containsKey(etat_action)){
+			index +=1;
+			ind = index;
+			indices.put(etat_action, ind);
+		}
+		else {
+			ind = indices.get(etat_action);
+			
+		}
 		for(int i = 0; i <nbFeatures; i++) {
 			features[i] = 0.0;
-			//if() mettre le 1 là ou il faut : ?
+			if(i == ind) {
+				features[i] = 1.0;
+			}
 		}
-		return null;
+		return features;
 	}
 	
 

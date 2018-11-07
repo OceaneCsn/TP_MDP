@@ -17,16 +17,16 @@ public class EtatPacmanMDPClassic implements Etat , Cloneable{
 	private ArrayList ghostPositionsX;
 	private ArrayList ghostPositionsY;
 	private int closestDot;
+	private int dim;
 	
 	public EtatPacmanMDPClassic(StateGamePacman _stategamepacman){
 		nbGhosts = _stategamepacman.getNumberOfGhosts();
 		ghostPositionsX = new ArrayList();
 		ghostPositionsY = new ArrayList();
 		position = new ArrayList();
+		
+		//StateGamePacman state = _stategamepacman;
 		for( int g = 0; g <nbGhosts; g++) {
-			System.out.println(g);
-			System.out.println(nbGhosts);
-
 			StateAgentPacman stateGhost = _stategamepacman.getGhostState(g);
 			ghostPositionsX.add(_stategamepacman.getGhostState(g).getX());
 			ghostPositionsY.add(_stategamepacman.getGhostState(g).getY());
@@ -37,6 +37,18 @@ public class EtatPacmanMDPClassic implements Etat , Cloneable{
 		position.add(stateAgent.getY());
 		
 		closestDot = _stategamepacman.getClosestDot(stateAgent);
+		
+		
+		dim = 1;
+		/*int pos_possibles;
+		//nombre de positions possibles 
+		pos_possibles = (_stategamepacman.getMaze().getSizeX()*_stategamepacman.getMaze().getSizeY()-_stategamepacman.getMaze().getNbwall());
+		//avec les fantomes et le pacman
+		dim = (int) Math.pow((double) pos_possibles, nbGhosts+1.0);
+		
+		//avec la distance max possible au dot le plus proche ie le nombre de cases du labyrinthe
+		dim *= pos_possibles; 
+		System.out.println(dim);*/
 	}
 	
 	@Override
@@ -60,7 +72,12 @@ public class EtatPacmanMDPClassic implements Etat , Cloneable{
 		// on renvoie le clone
 		return clone;
 	}
-
+	
+	
+	public int getDimensions() {
+		
+		return dim;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -69,6 +86,7 @@ public class EtatPacmanMDPClassic implements Etat , Cloneable{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + closestDot;
+		result = prime * result + dim;
 		result = prime * result + ((ghostPositionsX == null) ? 0 : ghostPositionsX.hashCode());
 		result = prime * result + ((ghostPositionsY == null) ? 0 : ghostPositionsY.hashCode());
 		result = prime * result + nbGhosts;
@@ -89,6 +107,8 @@ public class EtatPacmanMDPClassic implements Etat , Cloneable{
 			return false;
 		EtatPacmanMDPClassic other = (EtatPacmanMDPClassic) obj;
 		if (closestDot != other.closestDot)
+			return false;
+		if (dim != other.dim)
 			return false;
 		if (ghostPositionsX == null) {
 			if (other.ghostPositionsX != null)

@@ -21,10 +21,7 @@ public class QLearningAgent extends RLAgent {
 	 *  format de memorisation des Q valeurs: utiliser partout setQValeur car cette methode notifie la vue
 	 */
 	protected HashMap<Etat,HashMap<Action,Double>> qvaleurs;
-	protected Environnement former_env;
 	protected List<Action> former_actions_possibles;
-	//AU CHOIX: vous pouvez utiliser une Map avec des Pair pour clés si vous préférez
-	//protected HashMap<Pair<Etat,Action>,Double> qvaleurs;
 
 	
 	/**
@@ -39,7 +36,6 @@ public class QLearningAgent extends RLAgent {
 			Environnement _env) {
 		super(alpha, gamma, _env);
 		qvaleurs = new HashMap<Etat,HashMap<Action,Double>>();
-		former_env = _env;
 		former_actions_possibles = _env.getActionsPossibles(_env.getEtatCourant());
 	}
 	
@@ -59,18 +55,24 @@ public class QLearningAgent extends RLAgent {
 			return new ArrayList<Action>();
 			
 		}
-		if(!qvaleurs.isEmpty()) {
-			for(Action a : qvaleurs.get(e).keySet()) {
-				double maxtmp = Collections.max(qvaleurs.get(e).values());
-				if(qvaleurs.get(e).get(a) == maxtmp) {
-					returnactions.add(a);
-				}
+		double maxtmp = -10000000000.0;
+		//if(!qvaleurs.isEmpty()) {
+		for(Action a : this.getActionsLegales(e)) {
+			
+			if(this.getQValeur(e, a)>maxtmp ) {
+				maxtmp = this.getQValeur(e, a);
+				returnactions = new ArrayList<Action>();
+				returnactions.add(a);
+			}
+			if(this.getQValeur(e, a) == maxtmp ) {
+				returnactions.add(a);
 			}
 		}
-		else {
+		//}
+		/*else {
 			//toutes les actions ont une valeur de 0, on retourne donc la liste de toutes les actions possibles
 				return this.getActionsLegales(e);
-		}
+		}*/
 		return returnactions;		
 	}
 	
@@ -86,8 +88,10 @@ public class QLearningAgent extends RLAgent {
 
 	@Override
 	public double getQValeur(Etat e, Action a) {
-		System.out.println(qvaleurs);
-		return qvaleurs.get(e).get(a);
+		if(qvaleurs.containsKey(e)) {
+			return qvaleurs.get(e).get(a);
+		}
+		return 0.0;
 	}
 	
 	
@@ -151,7 +155,6 @@ public class QLearningAgent extends RLAgent {
 		double maxQ = Collections.max(qvaleurs.get(esuivant).values(),null);
 		double valeur = (1-alpha)*getQValeur(e,a) + alpha*(reward + gamma * maxQ);
 		setQValeur(e, a, valeur);
-		former_env = env;
 		former_actions_possibles = env.getActionsPossibles(env.getEtatCourant());
 	}
 
@@ -164,7 +167,6 @@ public class QLearningAgent extends RLAgent {
 	@Override
 	public void reset() {
 		super.reset();
-		System.out.println("je reset!");
 		qvaleurs.clear();
 		this.episodeNb = 0;
 		this.notifyObs();

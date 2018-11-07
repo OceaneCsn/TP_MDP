@@ -20,7 +20,7 @@ public class FeatureFunctionPacman implements FeatureFunction{
 
 
 	public FeatureFunctionPacman() {
-
+		
 	}
 
 	@Override
@@ -42,12 +42,35 @@ public class FeatureFunctionPacman implements FeatureFunction{
 			System.out.println("erreur dans FeatureFunctionPacman::getFeatures n'est pas un StateGamePacman");
 			return vfeatures;
 		}
-	
+		
+		//etat du pacman si il fait l'action a
 		StateAgentPacman pacmanstate_next= stategamepacman.movePacmanSimu(0, new ActionPacman(a.ordinal()));
 		 
-		//*** VOTRE CODE
+
+		//phi0 : biais
+		vfeatures[0] = 1;
 		
+		//phi1 : nombre de fantomes pouvant atteindre la position suivante du pacman en un pas
+		int nbGhosts = stategamepacman.getNumberOfGhosts();
+		vfeatures[1] = 0;
+		for (int i = 0; i < nbGhosts; i++) {
+			StateAgentPacman ghost = stategamepacman.getGhostState(i);
+			if(Math.abs(ghost.getX()-pacmanstate_next.getX())+Math.abs(ghost.getY()-pacmanstate_next.getY())==1) {
+				vfeatures[1] ++;
+			}
+		}
+				
+		//phi2 : presence d'un pacdot si l'agent fait l'action a
+		if(stategamepacman.getClosestDot(pacmanstate_next)==0) {
+			vfeatures[2] = 1;
+		}
+		else {
+			vfeatures[2] = 0;
+		}
 		
+		//phi3 : distance au pacdot
+		double size = stategamepacman.getMaze().getSizeX()*stategamepacman.getMaze().getSizeX();
+		vfeatures[3] = stategamepacman.getClosestDot(pacmanstate_next)/size;
 		
 		return vfeatures;
 	}

@@ -2,6 +2,7 @@ package agent.rlapproxagent;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import agent.rlagent.QLearningAgent;
@@ -36,18 +37,13 @@ public class QLApproxAgent extends QLearningAgent{
 	@Override
 	public double getQValeur(Etat e, Action a) {
 		
-		//*** VOTRE CODE ecrire la fonction d'approximation avec les features
-		
 		double[] features = feature_function.getFeatures(e, a);
-		
 		double Q = 0.0;
 		for (int i = 0; i <nbFeatures; i++) {
 			Q += features[i]*weights.get(i);
 		}
 		return Q;
 	}
-	
-	
 	
 	
 	@Override
@@ -59,15 +55,19 @@ public class QLApproxAgent extends QLearningAgent{
 		//arrete episode lq etat courant absorbant	
 		
 		//fonction de mise a jour des poids
-		for (int k = 0; k <nbFeatures; k++) {
-			double maxQ = 0.0;
-			for (Action ac: this.getActionsLegales(esuivant)) {
-				if(this.getQValeur(esuivant, ac) > maxQ) {
-					maxQ = this.getQValeur(esuivant, ac);
-				}
+		double maxQ = -1000000000;
+		for (Action ac: this.getActionsLegales(esuivant)) {
+			if(this.getQValeur(esuivant, ac) > maxQ) {
+				maxQ = this.getQValeur(esuivant, ac);
 			}
-			double new_weight = weights.get(k) + alpha*(reward + gamma*maxQ - this.getQValeur(e, a)*weights.get(k));
+		}
+		System.out.println(maxQ);
+		for (int k = 0; k <nbFeatures; k++) {
+			double[] features = feature_function.getFeatures(e, a);
+			double new_weight = weights.get(k) + alpha*(reward + gamma*maxQ - this.getQValeur(e, a))*features[k];
+			//System.out.println(weights);
 			weights.set(k, new_weight);
+			System.out.println(weights+String.valueOf(features[k]));
 		}
 	}
 	
@@ -76,9 +76,8 @@ public class QLApproxAgent extends QLearningAgent{
 		super.reset();
 		this.qvaleurs.clear();
 		
-		//*** VOTRE CODE
 		this.weights.clear();
-		//this.feature_function.reset(); je sais pas encore comment clear FeatureFonction
+		
 		
 		this.episodeNb =0;
 		this.notifyObs();
