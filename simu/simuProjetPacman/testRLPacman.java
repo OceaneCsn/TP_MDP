@@ -28,18 +28,18 @@ import agent.strategy.StrategyExplorationTest1;
 
 public class testRLPacman extends Application{
 	/** type de labyrinthe pour le jeu de pacman*/
-	static String mazename = "pacmanlayouts/smallGrid.lay";//smallGrid smallGrid2 mediumGrid
+	static String mazename = "pacmanlayouts/mediumGrid.lay";//smallGrid smallGrid2 mediumGrid
 
 	// parametres RL*/
 	static double gamma=0.8;
-	static double alpha=0.1;
+	static double alpha=0.01;
 	static double _epsilon = 0.05;
 	
 	// parametres experience a lancer, un episode = une partie */
 	/** nombre d'experiences a lancer (pour faire une moyenne), une experience est un apprentissage sur plusieurs parties */
-	static int nbmean =3;
+	static int nbmean =1;
 	/** nombre de parties ou l'agent apprend */
-	static int nbepisodelearn = 200;
+	static int nbepisodelearn = 300;
 	/** nombre de partie ou l'agent exploite la politique apprise (epsilon=0) */
 	static int nbepisodegreedy = 100;
 	/** nombre de parties ou l'on affiche le jeu pacman pour voir le comportement appris  */
@@ -56,7 +56,7 @@ public class testRLPacman extends Application{
 	static RLAgent rlagent;
 	static EnvironnementPacmanRL pacmanmdp ;
 	static GamePacmanPanel panel;
-	static JFrame frame ;
+	static JFrame frame;
 	/**
 	 * Chart pour tracer somme des rec par episode
 	 */
@@ -68,19 +68,17 @@ public class testRLPacman extends Application{
 		pacmanmdp = new EnvironnementPacmanMDPClassic(mazename,true);
 		rlagent = new QLearningAgent(alpha,gamma,pacmanmdp);
 
-		//Qlearning avec fonctions caracteristiques identite
-		/*pacmanmdp = new EnvironnementPacmanMDPClassic(mazename,true);
+	/*	//Qlearning avec fonctions caracteristiques identite (attention c'est long...)
+		pacmanmdp = new EnvironnementPacmanMDPClassic(mazename,true);
 	    EtatPacmanMDPClassic etatmdp = (EtatPacmanMDPClassic) pacmanmdp.getEtatCourant();
 		System.out.println("Dimensions de etatMDP: "+etatmdp.getDimensions());
 		FeatureFunction featurefunction = new FeatureFunctionIdentity(etatmdp.getDimensions(),4);
 		rlagent = new QLApproxAgent(alpha,gamma,pacmanmdp,featurefunction);*/
 
 		//QLearning avec approximation lineaire
-/*		pacmanmdp = new EnvironnementPacmanFeatureRL(mazename,true);//smallGrid smallGrid2 mediumGrid
+	/*	pacmanmdp = new EnvironnementPacmanFeatureRL(mazename,true);//smallGrid smallGrid2 mediumGrid
 		FeatureFunction featurefunction2 = new FeatureFunctionPacman();
 		rlagent = new QLApproxAgent(alpha,gamma,pacmanmdp,featurefunction2);*/
-
-
 	}
 	
 	/**
@@ -104,7 +102,7 @@ public class testRLPacman extends Application{
 			frame.setPreferredSize(new Dimension(640,480));
 			frame.add(panel);
 			frame.pack();
-			frame.setVisible(true);
+			frame.setVisible(false);
 		}
 		
 

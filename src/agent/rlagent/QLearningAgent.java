@@ -56,7 +56,6 @@ public class QLearningAgent extends RLAgent {
 			
 		}
 		double maxtmp = -10000000000.0;
-		//if(!qvaleurs.isEmpty()) {
 		for(Action a : this.getActionsLegales(e)) {
 			
 			if(this.getQValeur(e, a)>maxtmp ) {
@@ -68,11 +67,6 @@ public class QLearningAgent extends RLAgent {
 				returnactions.add(a);
 			}
 		}
-		//}
-		/*else {
-			//toutes les actions ont une valeur de 0, on retourne donc la liste de toutes les actions possibles
-				return this.getActionsLegales(e);
-		}*/
 		return returnactions;		
 	}
 	
@@ -116,8 +110,6 @@ public class QLearningAgent extends RLAgent {
 			qvaleurs.put(e, valeurAction);
 		}
 		
-		//System.out.println("valeur mise a jour : "+d);
-		//System.out.println("valeur stockee : "+qvaleurs.get(e).get(a));
 		ArrayList<Double> maxs = new ArrayList<Double>();
 		ArrayList<Double> mins = new ArrayList<Double>();
 		for (Etat et:qvaleurs.keySet()) {

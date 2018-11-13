@@ -39,8 +39,8 @@ public class EtatPacmanMDPClassic implements Etat , Cloneable{
 		closestDot = _stategamepacman.getClosestDot(stateAgent);
 		
 		
-		dim = 1;
-		/*int pos_possibles;
+		//dim = 1;
+		int pos_possibles;
 		//nombre de positions possibles 
 		pos_possibles = (_stategamepacman.getMaze().getSizeX()*_stategamepacman.getMaze().getSizeY()-_stategamepacman.getMaze().getNbwall());
 		//avec les fantomes et le pacman
@@ -48,7 +48,7 @@ public class EtatPacmanMDPClassic implements Etat , Cloneable{
 		
 		//avec la distance max possible au dot le plus proche ie le nombre de cases du labyrinthe
 		dim *= pos_possibles; 
-		System.out.println(dim);*/
+		//System.out.println(dim);
 	}
 	
 	@Override

@@ -1,9 +1,10 @@
 package agent.rlapproxagent;
 
-
+import java.lang.Object;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Arrays;
 
 import agent.rlagent.QLearningAgent;
 import agent.rlagent.RLAgent;
@@ -61,14 +62,30 @@ public class QLApproxAgent extends QLearningAgent{
 				maxQ = this.getQValeur(esuivant, ac);
 			}
 		}
-		System.out.println(maxQ);
-		for (int k = 0; k <nbFeatures; k++) {
-			double[] features = feature_function.getFeatures(e, a);
+		
+		double[] features = feature_function.getFeatures(e, a);
+
+		/*if (feature_function instanceof FeatureFunctionIdentity ) {
+			// to avoid browsing the huge list of features
+			ArrayList features_list = new ArrayList<>(Arrays.asList(features)); 
+			System.out.println(features_list.size());
+			int k = features_list.indexOf(1.0);
+			System.out.println("k : "+k);
 			double new_weight = weights.get(k) + alpha*(reward + gamma*maxQ - this.getQValeur(e, a))*features[k];
-			//System.out.println(weights);
 			weights.set(k, new_weight);
-			System.out.println(weights+String.valueOf(features[k]));
 		}
+		else {*/
+		for (int k = 0; k <nbFeatures; k++) {
+			if(features[k] != 0) {
+				double new_weight = weights.get(k) + alpha*(reward + gamma*maxQ - this.getQValeur(e, a))*features[k];
+				//System.out.println(weights);
+				weights.set(k, new_weight);
+			}
+			
+			//System.out.println(weights+String.valueOf(features[k]));
+			//}
+		}
+		
 	}
 	
 	@Override
@@ -77,7 +94,7 @@ public class QLApproxAgent extends QLearningAgent{
 		this.qvaleurs.clear();
 		
 		this.weights.clear();
-		
+		this.feature_function.reset();
 		
 		this.episodeNb =0;
 		this.notifyObs();

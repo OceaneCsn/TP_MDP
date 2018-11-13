@@ -17,21 +17,15 @@ import javafx.util.Pair;
  *
  */
 public class FeatureFunctionIdentity implements FeatureFunction {
-	//*** VOTRE CODE
 	
 	private int nbFeatures;
-	private int nbEtat;
-	private int nbAction;
 	private double[] features;
 	private HashMap<HashMap<Etat, Action>, Integer> indices;
 	private int index;
 	
 	public FeatureFunctionIdentity(int _nbEtat, int _nbAction){
-		
 		index = -1;
 		nbFeatures = _nbEtat*_nbAction;
-		nbAction = _nbAction;
-		nbEtat = _nbEtat;
 		features = new double[nbFeatures];
 		indices = new HashMap<HashMap<Etat, Action>, Integer>();
 	}
@@ -46,23 +40,36 @@ public class FeatureFunctionIdentity implements FeatureFunction {
 		int ind;
 		HashMap<Etat, Action> etat_action= new HashMap<Etat, Action>();
 		etat_action.put(e, a);
+		// on ajoute les features et leur index dans la feature function au fur et a mesure
+		// qu'on les rencontre
+		// ainsi, si on rencontre deux fois le même etat, son indice sera deja connu, sinon, on
+		// ajoutera un 1 au dernier indice connu +1.
 		if(!indices.containsKey(etat_action)){
 			index +=1;
 			ind = index;
 			indices.put(etat_action, ind);
+			//System.out.println(ind+"new");
 		}
 		else {
 			ind = indices.get(etat_action);
+			//System.out.println(ind+"************************ met again **********************");
 			
 		}
+		//System.out.println("ind : "+String.valueOf(ind)+" nb loops ! "+nbFeatures);
 		for(int i = 0; i <nbFeatures; i++) {
 			features[i] = 0.0;
 			if(i == ind) {
+				//System.out.println("poids 1 : "+i);
 				features[i] = 1.0;
 			}
 		}
+		
 		return features;
 	}
 	
-
+	public void reset() {
+		features = new double[nbFeatures];
+		indices = new HashMap<HashMap<Etat, Action>, Integer>();
+		
+	}
 }

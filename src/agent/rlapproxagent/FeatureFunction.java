@@ -19,8 +19,8 @@ public interface FeatureFunction {
 	
 	
 	/** @return vecteur de fonctions caracteristiques pour couple (e,a) */
-	public double[] getFeatures(Etat e,Action a);
+	public double[] getFeatures(Etat e, Action a);
 	
-
+	public void reset();
 
 }
