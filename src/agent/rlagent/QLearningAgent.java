@@ -76,7 +76,6 @@ public class QLearningAgent extends RLAgent {
 		if(qvaleurs.containsKey(e)) {
 			return Collections.max(qvaleurs.get(e).values());
 		}
-		
 		return 0.0;
 	}
 

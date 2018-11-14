@@ -28,7 +28,7 @@ import agent.strategy.StrategyExplorationTest1;
 
 public class testRLPacman extends Application{
 	/** type de labyrinthe pour le jeu de pacman*/
-	static String mazename = "pacmanlayouts/mediumGrid.lay";//smallGrid smallGrid2 mediumGrid
+	static String mazename = "pacmanlayouts/smallGrid.lay";//smallGrid smallGrid2 mediumGrid
 
 	// parametres RL*/
 	static double gamma=0.8;
@@ -37,11 +37,11 @@ public class testRLPacman extends Application{
 	
 	// parametres experience a lancer, un episode = une partie */
 	/** nombre d'experiences a lancer (pour faire une moyenne), une experience est un apprentissage sur plusieurs parties */
-	static int nbmean =1;
+	static int nbmean =3;
 	/** nombre de parties ou l'agent apprend */
-	static int nbepisodelearn = 300;
+	static int nbepisodelearn = 500;
 	/** nombre de partie ou l'agent exploite la politique apprise (epsilon=0) */
-	static int nbepisodegreedy = 100;
+	static int nbepisodegreedy = 300;
 	/** nombre de parties ou l'on affiche le jeu pacman pour voir le comportement appris  */
 	static int nbepisodegreedydisplay=0;
 
@@ -65,8 +65,8 @@ public class testRLPacman extends Application{
 	
 	private static void setRLAgent(){
 		//QLearning tabulaire classique
-		pacmanmdp = new EnvironnementPacmanMDPClassic(mazename,true);
-		rlagent = new QLearningAgent(alpha,gamma,pacmanmdp);
+	/*	pacmanmdp = new EnvironnementPacmanMDPClassic(mazename,true);
+		rlagent = new QLearningAgent(alpha,gamma,pacmanmdp);*/
 
 	/*	//Qlearning avec fonctions caracteristiques identite (attention c'est long...)
 		pacmanmdp = new EnvironnementPacmanMDPClassic(mazename,true);
@@ -76,9 +76,9 @@ public class testRLPacman extends Application{
 		rlagent = new QLApproxAgent(alpha,gamma,pacmanmdp,featurefunction);*/
 
 		//QLearning avec approximation lineaire
-	/*	pacmanmdp = new EnvironnementPacmanFeatureRL(mazename,true);//smallGrid smallGrid2 mediumGrid
+		pacmanmdp = new EnvironnementPacmanFeatureRL(mazename,true);//smallGrid smallGrid2 mediumGrid
 		FeatureFunction featurefunction2 = new FeatureFunctionPacman();
-		rlagent = new QLApproxAgent(alpha,gamma,pacmanmdp,featurefunction2);*/
+		rlagent = new QLApproxAgent(alpha,gamma,pacmanmdp,featurefunction2);
 	}
 	
 	/**
@@ -104,8 +104,6 @@ public class testRLPacman extends Application{
 			frame.pack();
 			frame.setVisible(false);
 		}
-		
-
 	}
 
 	/** trace courbe moyenne sur plusieurs expe, affiche jeu pacman sur derniers episodes greedy de derniere expe */
